@@ -69,8 +69,13 @@ function getFormat() {
 }
 
 function resizeCanvasForDisplay(width, height) {
-  const maxDisplay = Math.min(720, window.innerWidth - 48);
-  const scale = Math.min(1, maxDisplay / width);
+  const wrap = canvas.parentElement;
+  if (!wrap || !width || !height) return;
+
+  const availW = wrap.clientWidth;
+  const availH = wrap.clientHeight;
+  const scale = Math.min(1, availW / width, availH / height);
+
   canvas.style.width = `${Math.round(width * scale)}px`;
   canvas.style.height = `${Math.round(height * scale)}px`;
 }
@@ -116,6 +121,8 @@ function drawCollage() {
 
   canvas.classList.remove("is-hidden");
   exportBtn.disabled = false;
+
+  requestAnimationFrame(() => resizeCanvasForDisplay(width, height));
 }
 
 function exportCollage() {
@@ -141,9 +148,24 @@ async function init() {
 generateBtn.addEventListener("click", drawCollage);
 exportBtn.addEventListener("click", exportCollage);
 formatSelect.addEventListener("change", drawCollage);
-window.addEventListener("resize", () => {
-  if (loadedImages.length) resizeCanvasForDisplay(canvas.width, canvas.height);
-});
+function watchPosterSize() {
+  const wrap = canvas.parentElement;
+  if (!wrap || typeof ResizeObserver === "undefined") {
+    window.addEventListener("resize", onPosterResize);
+    return;
+  }
+
+  const observer = new ResizeObserver(onPosterResize);
+  observer.observe(wrap);
+}
+
+function onPosterResize() {
+  if (loadedImages.length && canvas.width) {
+    resizeCanvasForDisplay(canvas.width, canvas.height);
+  }
+}
+
+watchPosterSize();
 
 generateBtn.disabled = true;
 init();

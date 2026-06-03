@@ -7,31 +7,33 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header">
-    <h1 class="title">Agape</h1>
-  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1 class="title">Agape</h1>
 
-  <main class="main">
-    <div class="controls">
-      <label class="control">
-        <span class="control-label">Formato</span>
-        <select id="format" class="select">
-          <option value="square">Quadrato</option>
-          <option value="portrait">Verticale</option>
-          <option value="landscape">Orizzontale</option>
-          <option value="stories">Stories</option>
-        </select>
-      </label>
+      <div class="controls">
+        <label class="control">
+          <span class="control-label">Formato</span>
+          <select id="format" class="select">
+            <option value="square">Quadrato</option>
+            <option value="portrait">Verticale</option>
+            <option value="landscape">Orizzontale</option>
+            <option value="stories">Stories</option>
+          </select>
+        </label>
 
-      <button type="button" id="generate" class="btn btn-primary">Nuovo collage</button>
-      <button type="button" id="export" class="btn" disabled>Scarica</button>
-    </div>
+        <button type="button" id="generate" class="btn btn-primary">Nuovo collage</button>
+        <button type="button" id="export" class="btn" disabled>Scarica</button>
+      </div>
+    </aside>
 
-    <div class="stage-wrap">
-      <canvas id="stage" class="stage" aria-label="Collage generato"></canvas>
-      <p id="loading" class="loading">Caricamento immagini…</p>
-    </div>
-  </main>
+    <section class="poster" aria-label="Area collage">
+      <div class="stage-wrap">
+        <canvas id="stage" class="stage" aria-label="Collage generato"></canvas>
+        <p id="loading" class="loading">Caricamento immagini…</p>
+      </div>
+    </section>
+  </div>
 
   <script src="app.js"></script>
 </body>
