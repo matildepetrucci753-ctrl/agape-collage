@@ -1,0 +1,161 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --text: #1a1a1a;
+  --muted: #666;
+  --border: #e8e8e8;
+  --bg: #fafafa;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.header {
+  padding: 2.5rem 1.5rem 0;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.control-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.select {
+  min-width: 10rem;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: 2px solid #943ba4;
+  outline-offset: 2px;
+}
+
+.btn {
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.15s, opacity 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: #bbb;
+}
+
+.btn:focus {
+  outline: 2px solid #943ba4;
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+
+.btn-primary:hover:not(:disabled) {
+  border-color: #333;
+  background: #333;
+}
+
+.stage-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.stage {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 2px 24px rgb(0 0 0 / 0.06);
+}
+
+.stage.is-hidden {
+  visibility: hidden;
+}
+
+.loading {
+  position: absolute;
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.loading.is-hidden {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .control,
+  .btn {
+    width: 100%;
+  }
+}
