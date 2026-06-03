@@ -13,10 +13,10 @@ const MIN_IMAGES = 4;
 const MAX_IMAGES = 6;
 
 const FORMATS = {
-  square: { width: 1080, height: 1080, label: "quadrato" },
-  portrait: { width: 1080, height: 1350, label: "verticale" },
-  landscape: { width: 1920, height: 1080, label: "orizzontale" },
-  stories: { width: 1080, height: 1920, label: "stories" },
+  square: { width: 1080, height: 1080, label: "quadrato", sizeMultiplier: 1 },
+  portrait: { width: 1080, height: 1350, label: "verticale", sizeMultiplier: 2 },
+  landscape: { width: 1920, height: 1080, label: "orizzontale", sizeMultiplier: 2 },
+  stories: { width: 1080, height: 1920, label: "stories", sizeMultiplier: 2 },
 };
 
 const canvas = document.getElementById("stage");
@@ -96,10 +96,11 @@ function drawCollage() {
   ctx.fillRect(0, 0, width, height);
 
   const pieces = pickCollageImages();
+  const format = getFormat();
   const canvasMin = Math.min(width, height);
   // Meno foto = più grandi; con 6 foto restano comunque ampie sulla tavola
   const sizeByCount = 0.58 - (pieces.length - 2) * 0.05;
-  const baseScale = canvasMin * sizeByCount;
+  const baseScale = canvasMin * sizeByCount * (format.sizeMultiplier ?? 1);
 
   pieces.forEach((img) => {
     const scale = rand(0.92, 1.12) * (baseScale / Math.max(img.width, img.height));
