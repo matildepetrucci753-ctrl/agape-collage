@@ -9,7 +9,7 @@ const IMAGE_FILES = [
   "immagini/imm6.png",
 ];
 
-const MIN_IMAGES = 2;
+const MIN_IMAGES = 4;
 const MAX_IMAGES = 6;
 
 const FORMATS = {
@@ -91,15 +91,21 @@ function drawCollage() {
   ctx.fillRect(0, 0, width, height);
 
   const pieces = pickCollageImages();
-  const baseScale = Math.min(width, height) * 0.22;
+  const canvasMin = Math.min(width, height);
+  // Meno foto = più grandi; con 6 foto restano comunque ampie sulla tavola
+  const sizeByCount = 0.58 - (pieces.length - 2) * 0.05;
+  const baseScale = canvasMin * sizeByCount;
 
   pieces.forEach((img) => {
-    const scale = rand(0.65, 1.35) * (baseScale / Math.max(img.width, img.height));
+    const scale = rand(0.92, 1.12) * (baseScale / Math.max(img.width, img.height));
     const w = img.width * scale;
     const h = img.height * scale;
     const rotation = rand(-38, 38) * (Math.PI / 180);
-    const x = rand(-w * 0.15, width - w * 0.85);
-    const y = rand(-h * 0.15, height - h * 0.85);
+    // Posizioni vicino al centro → più sovrapposizioni
+    const spreadX = width * 0.28;
+    const spreadY = height * 0.28;
+    const x = width / 2 - w / 2 + rand(-spreadX, spreadX);
+    const y = height / 2 - h / 2 + rand(-spreadY, spreadY);
 
     ctx.save();
     ctx.translate(x + w / 2, y + h / 2);
