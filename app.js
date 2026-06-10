@@ -63,10 +63,13 @@ const ctx = canvas.getContext("2d");
 const formatSelect = document.getElementById("format");
 const generateBtn = document.getElementById("generate");
 const exportBtn = document.getElementById("export");
+const radiusSlider = document.getElementById("radiusSlider");
 const loadingEl = document.getElementById("loading");
 
 let loadedImages = [];
 let lastBg = "#ffffff";
+let currentPieces = [];
+let currentLayout = [];
 
 function rand(min, max) {
   return min + Math.random() * (max - min);
@@ -137,28 +140,40 @@ function drawCollage() {
   resizeCanvasForDisplay(width, height);
 
   lastBg = pickRandom(PALETTE);
-  ctx.fillStyle = lastBg;
-  ctx.fillRect(0, 0, width, height);
-
-  const pieces = pickCollageImages();
+  currentPieces = pickCollageImages();
   const canvasMin = Math.min(width, height);
 
-  const sizeByCount = 0.50 - (pieces.length - 6) * 0.06;
+  const sizeByCount = 0.50 - (currentPieces.length - 6) * 0.06;
   const baseScale = canvasMin * sizeByCount;
 
-  const cx = width / 2;
-  const cy = height / 2;
-
-  for (let idx = pieces.length - 1; idx >= 0; idx--) {
-    const img = pieces[idx];
+  currentLayout = currentPieces.map((img, idx) => {
     const scale = rand(0.88, 1.00) * (baseScale / Math.max(img.width, img.height));
     const w = img.width * scale;
     const h = img.height * scale;
     const rotation = rand(-15, 15) * (Math.PI / 180);
-
-    const slice = (Math.PI * 2) / pieces.length;
+    const slice = (Math.PI * 2) / currentPieces.length;
     const angle = slice * idx + rand(0, slice * 0.25);
-    const radius = Math.max(w, h) * 0.56;
+    return { w, h, rotation, angle };
+  });
+
+  redraw();
+}
+
+function redraw() {
+  const { width, height } = getFormat();
+  canvas.width = width;
+  canvas.height = height;
+
+  ctx.fillStyle = lastBg;
+  ctx.fillRect(0, 0, width, height);
+
+  const cx = width / 2;
+  const cy = height / 2;
+
+  for (let idx = currentPieces.length - 1; idx >= 0; idx--) {
+    const img = currentPieces[idx];
+    const { w, h, rotation, angle } = currentLayout[idx];
+    const radius = Math.max(w, h) * parseFloat(radiusSlider.value);
 
     const x = cx + Math.cos(angle) * radius - w / 2;
     const y = cy + Math.sin(angle) * radius - h / 2;
@@ -201,6 +216,7 @@ async function init() {
 generateBtn.addEventListener("click", drawCollage);
 exportBtn.addEventListener("click", exportCollage);
 formatSelect.addEventListener("change", drawCollage);
+radiusSlider.addEventListener("input", redraw);
 function watchPosterSize() {
   const wrap = canvas.parentElement;
   if (!wrap || typeof ResizeObserver === "undefined") {
