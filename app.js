@@ -141,25 +141,24 @@ function drawCollage() {
   ctx.fillRect(0, 0, width, height);
 
   const pieces = pickCollageImages();
+  const canvasMin = Math.min(width, height);
 
-  const sizeByCount = 0.50 - (pieces.length - 6) * 0.085;
-  const baseScale = width * sizeByCount;
+  const sizeByCount = 0.48 - (pieces.length - 6) * 0.065;
+  const baseScale = canvasMin * sizeByCount;
 
   const cx = width / 2;
   const cy = height / 2;
-  const maxRadius = Math.min(width, height) * 0.50;
 
   for (let idx = pieces.length - 1; idx >= 0; idx--) {
     const img = pieces[idx];
-    const scale = rand(0.88, 1.02) * (baseScale / Math.max(img.width, img.height));
+    const scale = rand(0.88, 1.00) * (baseScale / Math.max(img.width, img.height));
     const w = img.width * scale;
     const h = img.height * scale;
     const rotation = rand(-15, 15) * (Math.PI / 180);
 
-    const progress = pieces.length > 1 ? idx / (pieces.length - 1) : 0;
-    const radius = maxRadius * (0.10 + progress * 0.90);
     const slice = (Math.PI * 2) / pieces.length;
-    const angle = slice * idx + rand(0, slice * 0.35);
+    const angle = slice * idx + rand(0, slice * 0.25);
+    const radius = Math.max(w, h) * 0.53;
 
     const x = cx + Math.cos(angle) * radius - w / 2;
     const y = cy + Math.sin(angle) * radius - h / 2;
