@@ -143,7 +143,7 @@ function drawCollage() {
   const pieces = pickCollageImages();
   const canvasMin = Math.min(width, height);
 
-  const sizeByCount = 0.48 - (pieces.length - 6) * 0.065;
+  const sizeByCount = 0.50 - (pieces.length - 6) * 0.06;
   const baseScale = canvasMin * sizeByCount;
 
   const cx = width / 2;
@@ -158,7 +158,7 @@ function drawCollage() {
 
     const slice = (Math.PI * 2) / pieces.length;
     const angle = slice * idx + rand(0, slice * 0.25);
-    const radius = Math.max(w, h) * 0.53;
+    const radius = Math.max(w, h) * 0.56;
 
     const x = cx + Math.cos(angle) * radius - w / 2;
     const y = cy + Math.sin(angle) * radius - h / 2;
