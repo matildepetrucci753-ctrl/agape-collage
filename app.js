@@ -1,16 +1,55 @@
 const PALETTE = ["#dca8f8", "#fee5f9", "#943ba4", "#000070", "#d90424", "#ffd332"];
 
 const IMAGE_FILES = [
+  "immagini/364210ff4690231f930d2bba03d199a0.png",
+  "immagini/6941a6ca8fa02674f20843af4f36cc2a.png",
+  "immagini/8e8bf0645f3540c3af59611cf61fb8a4.png",
+  "immagini/930af06d61cf852055c0bcc0a43d3cad.png",
+  "immagini/bfg.png",
+  "immagini/bg.png",
+  "immagini/ChatGPT Image 2 giu 2026, 12_53_03.png",
+  "immagini/ChatGPT Image 2 giu 2026, 13_03_55.png",
+  "immagini/d.png",
+  "immagini/dd.png",
+  "immagini/ddddd.png",
+  "immagini/decd64f48679d2fe1832a1509a2440e8.jpg",
+  "immagini/dgr.png",
+  "immagini/download (2).png",
+  "immagini/download.png",
+  "immagini/f5b6456b1e2f6d01c456756f1067638f.png",
+  "immagini/fbdf.png",
+  "immagini/fbfd.png",
+  "immagini/fff.png",
+  "immagini/fg.png",
+  "immagini/gdv.png",
+  "immagini/ggg.png",
+  "immagini/ghtdf.png",
+  "immagini/gsd.png",
+  "immagini/gsf.png",
+  "immagini/hfg.png",
+  "immagini/hh.png",
+  "immagini/hjhj.png",
+  "immagini/hnhfb.png",
   "immagini/imm1.png",
   "immagini/imm2.png",
   "immagini/imm3.png",
   "immagini/imm4.png",
   "immagini/imm5.png",
   "immagini/imm6.png",
+  "immagini/jtrfhfr.png",
+  "immagini/kk.png",
+  "immagini/nrb.png",
+  "immagini/rbdfgv.png",
+  "immagini/sacad.png",
+  "immagini/tbhsf.png",
+  "immagini/vcad.png",
+  "immagini/vsf.png",
+  "immagini/wef.png",
+  "immagini/WhatsApp Image 2026-06-02 at 13.17.39.png",
 ];
 
-const MIN_IMAGES = 4;
-const MAX_IMAGES = 6;
+const MIN_IMAGES = 6;
+const MAX_IMAGES = 8;
 
 const FORMATS = {
   square: { width: 1080, height: 1080, label: "quadrato", sizeMultiplier: 1 },
@@ -60,8 +99,14 @@ function loadImage(src) {
 }
 
 async function loadAllImages() {
-  const results = await Promise.all(IMAGE_FILES.map(loadImage));
-  return results;
+  const results = await Promise.allSettled(IMAGE_FILES.map(loadImage));
+  const loaded = results
+    .filter(r => r.status === "fulfilled")
+    .map(r => r.value);
+  if (loaded.length < MIN_IMAGES) {
+    throw new Error(`Caricate solo ${loaded.length} immagini su ${IMAGE_FILES.length}`);
+  }
+  return loaded;
 }
 
 function getFormat() {
@@ -96,29 +141,37 @@ function drawCollage() {
   ctx.fillRect(0, 0, width, height);
 
   const pieces = pickCollageImages();
-  const format = getFormat();
-  const canvasMin = Math.min(width, height);
-  // Meno foto = più grandi; con 6 foto restano comunque ampie sulla tavola
-  const sizeByCount = 0.58 - (pieces.length - 2) * 0.05;
-  const baseScale = canvasMin * sizeByCount * (format.sizeMultiplier ?? 1);
 
-  pieces.forEach((img) => {
-    const scale = rand(0.92, 1.12) * (baseScale / Math.max(img.width, img.height));
+  const sizeByCount = 0.50 - (pieces.length - 6) * 0.085;
+  const baseScale = width * sizeByCount;
+
+  const cx = width / 2;
+  const cy = height / 2;
+  const maxRadius = Math.min(width, height) * 0.50;
+
+  for (let idx = pieces.length - 1; idx >= 0; idx--) {
+    const img = pieces[idx];
+    const scale = rand(0.88, 1.02) * (baseScale / Math.max(img.width, img.height));
     const w = img.width * scale;
     const h = img.height * scale;
-    const rotation = rand(-38, 38) * (Math.PI / 180);
-    // Posizioni vicino al centro → più sovrapposizioni
-    const spreadX = width * 0.28;
-    const spreadY = height * 0.28;
-    const x = width / 2 - w / 2 + rand(-spreadX, spreadX);
-    const y = height / 2 - h / 2 + rand(-spreadY, spreadY);
+    const rotation = rand(-15, 15) * (Math.PI / 180);
+
+    const progress = pieces.length > 1 ? idx / (pieces.length - 1) : 0;
+    const radius = maxRadius * (0.10 + progress * 0.90);
+    const slice = (Math.PI * 2) / pieces.length;
+    const angle = slice * idx + rand(0, slice * 0.35);
+
+    const x = cx + Math.cos(angle) * radius - w / 2;
+    const y = cy + Math.sin(angle) * radius - h / 2;
 
     ctx.save();
     ctx.translate(x + w / 2, y + h / 2);
     ctx.rotate(rotation);
+    ctx.shadowColor = "rgba(0,0,0,0.15)";
+    ctx.shadowBlur = 6;
     ctx.drawImage(img, -w / 2, -h / 2, w, h);
     ctx.restore();
-  });
+  }
 
   canvas.classList.remove("is-hidden");
   exportBtn.disabled = false;
