@@ -51,6 +51,13 @@ const IMAGE_FILES = [
 const MIN_IMAGES = 6;
 const MAX_IMAGES = 8;
 
+const PAROLE_FILES = [
+  "parole/parola1.png",
+  "parole/parola2.png",
+  "parole/parola3.png",
+  "parole/parola4.png",
+];
+
 const FORMATS = {
   square: { width: 1080, height: 1080, label: "quadrato", sizeMultiplier: 1 },
   portrait: { width: 1080, height: 1350, label: "verticale", sizeMultiplier: 2 },
@@ -67,6 +74,8 @@ const radiusSlider = document.getElementById("radiusSlider");
 const loadingEl = document.getElementById("loading");
 
 let loadedImages = [];
+let paroleImages = [];
+let currentParole = null;
 let lastBg = "#ffffff";
 let currentPieces = [];
 let currentLayout = [];
@@ -156,6 +165,8 @@ function drawCollage() {
     return { w, h, rotation, angle };
   });
 
+  currentParole = pickRandom(paroleImages);
+
   redraw();
 }
 
@@ -187,6 +198,18 @@ function redraw() {
     ctx.restore();
   }
 
+  if (currentParole) {
+    const formatMult = formatSelect.value === "landscape" ? 0.81 : 1;
+    const parola2Mult = currentParole.src.includes("parola2") ? 0.9 : 1;
+    const paroleW = width * (currentParole.src.includes("parola2") ? 0.50 : 0.75) * formatMult * parola2Mult;
+    const scale = paroleW / currentParole.width;
+    const paroleH = currentParole.height * scale;
+    const px = (width - paroleW) / 2;
+    const py = height - paroleH - height * 0.05;
+
+    ctx.drawImage(currentParole, px, py, paroleW, paroleH);
+  }
+
   canvas.classList.remove("is-hidden");
   exportBtn.disabled = false;
 
@@ -205,6 +228,10 @@ function exportCollage() {
 async function init() {
   try {
     loadedImages = await loadAllImages();
+    const paroleResults = await Promise.allSettled(PAROLE_FILES.map(loadImage));
+    paroleImages = paroleResults
+      .filter(r => r.status === "fulfilled")
+      .map(r => r.value);
     loadingEl.classList.add("is-hidden");
     generateBtn.disabled = false;
     drawCollage();
